@@ -1,4 +1,4 @@
-# MiniStock
+# VimStock
 基于vim命令行的炒股插件
 
 ![Alt text](https://github.com/guofh/VimStock/blob/master/VimStock.png)
