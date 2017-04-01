@@ -30,9 +30,8 @@ command! -nargs=0 Vgnd exec('py CMD_Package().get_gnd()')
 command! -nargs=0 Vhy exec('py CMD_Package().get_hy()')
 command! -nargs=0 Vhyd exec('py CMD_Package().get_hyd()')
 
-
-
-
+command! -nargs=* Vbk exec('py FundsInfo().get_bk(<f-args>)')
+command! -nargs=0 Vgo exec('py FundsInfo().get_bk_quick()')
 
 
 python << EOF
@@ -125,7 +124,7 @@ class TotalStockInfo():
             #self.title_print2()
             #print tabulate(df, tablefmt='rst')
         vim.current.buffer.append('')
-        cmdStr = 'Mallstock '+sortkey+' '+asc_flag+' '+page
+        cmdStr = 'Vallstock '+sortkey+' '+asc_flag+' '+page
         vim.current.buffer.append(cmdStr)
 
 
@@ -177,7 +176,7 @@ class FundsInfo():
         cur_url = 'http://data.10jqka.com.cn/funds/gnzjl/field/'+orderKey+'/order/'+asc+'/page/'+page+'/ajax/1/'
         r = requests.get(cur_url)
         df = pd.read_html(r.text)[0]
-        df['z'] = self.get_bk_codes(r.text)
+        df['z'] = self.__get_bk_codes__(r.text)
         self.__output_gn__(df)
 
         vim.current.buffer.append('')
@@ -200,7 +199,7 @@ class FundsInfo():
         cur_url = 'http://data.10jqka.com.cn/funds/hyzjl/field/'+orderKey+'/order/'+asc+'/page/'+page+'/ajax/1/'
         r = requests.get(cur_url)
         df = pd.read_html(r.text)[0]
-        df['z'] = self.get_bk_codes(r.text)
+        df['z'] = self.__get_bk_codes__(r.text)
         
         self.__output_hy__(df)
 
@@ -209,16 +208,45 @@ class FundsInfo():
         vim.current.buffer.append(cmdStr)
 
     ########################
+    #    获取板块信息
+    ########################
+ 
+    def get_bk(self,code,desc,page):
+
+    #line = vim.current.buffer[vim.current.window.cursor[0]-1]
+    #url = re.findall('<h>(.*?)<h>',line,re.S|re.M)[0]
+        url = ''
+        if code[0] is '8':
+            url = 'http://q.10jqka.com.cn/thshy/detail/field/199112/order/desc/page/'+page+'/ajax/1/code/'+code
+        else :
+            url = 'http://q.10jqka.com.cn/gn/detail/field/199112/order/desc/page/'+page+'/ajax/1/code/'+code
+        r = requests.get(url)
+        df = pd.read_html(r.text)[0]
+        self.__output_bk__(df)
+        vim.current.buffer.append('')
+        cmdStr = 'Vbk '+code+' 1'+' '+page
+        vim.current.buffer.append(cmdStr)
+
+    def get_bk_quick(self):
+        
+        line = vim.current.buffer[vim.current.window.cursor[0]-1]
+        code = re.findall('<(.*?)>',line,re.S|re.M)[0]
+        self.get_bk(code,'1','1')
+
+    ########################
     #   得到板块的链接 
     ########################    
-    def get_bk_codes(self,text):
+    def __get_bk_codes__(self,text):
         url_arr = []
         tbody = re.findall('<tbody>(.*?)</tbody>',text,re.S|re.M)
         tr = re.findall('<tr(.*?)</tr>',tbody[0],re.S|re.M)
         for line in tr:
             urls = re.findall("(?<=href=\").+?(?=\")|(?<=href=\').+?(?=\')",line,re.S|re.M)
-            url =  "<h>"+urls[0]+"<h>"
-            url_arr.append(url)
+            url =  urls[0]
+            code = url[-7:-1]
+            code = '<'+code+'>'
+            #code = re.findall('/(.*?)/<h>',url,re.S|re.M)
+            url_arr.append(code)
         return url_arr
 
 
@@ -249,6 +277,37 @@ class FundsInfo():
 
             vim.current.buffer.append('%+2s  %+6s  %+6s   %+6s    %+6s   %+6s   %+10s   %+10s   %+10s   %+10s   %+10s'%(f0,f1,f2,f3,f4,f5,f6,f7,f8,f9,f10))
 
+
+
+    ########################
+    #   行业资金流输出
+    ########################
+    def __output_bk__(self,df):
+        
+        df.columns = ['a', 'b', 'c', 'd', 'e','f', 'g', 'h', 'i', 'j','k','l','m','n','o']
+        del df['o']
+        df = df.set_index('a')
+    	del vim.current.buffer[:]
+        vim.current.buffer.append('      代码     名称     现价  涨跌幅(%) 涨跌   涨速(%) 换手(%)  量比   振幅(%)    成交额       流通股       流通市值    市盈率  ')
+        vim.current.buffer.append('')
+        numList = df.index.values
+        for i in numList:
+            num = i
+            stockCode = df.get_value(i,'b')
+            stockName = df.get_value(i,'c')
+            price      = df.get_value(i,'d')
+            zdf       = df.get_value(i,'e')
+            zd        = df.get_value(i,'f')
+            zs        = df.get_value(i,'g')
+            hs      = df.get_value(i,'h')
+            lb      = df.get_value(i,'i')
+            zf      = df.get_value(i,'j')
+            cje      = df.get_value(i,'k')
+            ltg      = df.get_value(i,'l')
+            tlsz      = df.get_value(i,'m')
+            syl      = df.get_value(i,'n')
+            vim.current.buffer.append('%+2s  %+6s  %+4s  %+6s  %+6s  %+6s  %+6s  %+6s  %+6s  %+6s  %+10s  %+10s  %+10s  %+8s'%(num,stockCode,stockName,price,zdf,zd,zs,hs,lb,zf,cje,ltg,tlsz,syl))
+   
     ########################
     #   行业资金流输出
     ########################
@@ -256,7 +315,7 @@ class FundsInfo():
         df.columns = ['a', 'b', 'c', 'd', 'e','f', 'g', 'h', 'i', 'j','k','z']
         df = df.set_index('a')
     	del vim.current.buffer[:]
-        vim.current.buffer.append('       行业       行业指数    涨跌幅   流入资金(亿)   流出资金(亿)  净额(亿)  公司家数   领涨股   涨跌幅.1  当前价(元)   链接')
+        vim.current.buffer.append('       行业     代码    涨跌幅  行业指数    流入资金(亿)   流出资金(亿)  净额(亿)  公司家数   领涨股   涨跌幅.1  当前价(元)')
         vim.current.buffer.append('')
         
         numList = df.index.values
@@ -274,7 +333,7 @@ class FundsInfo():
             f10    = df.get_value(i,'k')
             f11   = df.get_value(i,'z')
 
-            vim.current.buffer.append('%+2s  %+6s     %+8s    %+6s     %+6s      %+6s     %+6s     %+4s      %+4s    %+6s    %+6s   %+100s'%(f0,f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11))
+            vim.current.buffer.append('%+2s  %+6s  %+8s  %+6s  %+8s     %+6s      %+6s     %+6s     %+4s      %+4s    %+6s    %+6s  '%(f0,f1,f11,f3,f2,f4,f5,f6,f7,f8,f9,f10))
 
     ########################
     #    概念，资金流输出
@@ -283,7 +342,7 @@ class FundsInfo():
         df.columns = ['a', 'b', 'c', 'd', 'e','f', 'g', 'h', 'i', 'j','k','z']
         df = df.set_index('a')
     	del vim.current.buffer[:]
-        vim.current.buffer.append('       行业       行业指数    涨跌幅   流入资金(亿)   流出资金(亿)  净额(亿)  公司家数   领涨股   涨跌幅.1  当前价(元)   链接')
+        vim.current.buffer.append('       行业     代码    涨跌幅  行业指数    流入资金(亿)   流出资金(亿)  净额(亿)  公司家数   领涨股   涨跌幅.1  当前价(元)')
         vim.current.buffer.append('')
         
         numList = df.index.values
@@ -301,7 +360,8 @@ class FundsInfo():
             f10    = df.get_value(i,'k')
             f11   = df.get_value(i,'z')
 
-            vim.current.buffer.append('%+2s  %+6s     %+8s    %+6s     %+6s      %+6s     %+6s     %+4s      %+4s    %+6s    %+6s   %+100s'%(f0,f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11))
+            vim.current.buffer.append('%+2s  %+6s  %+8s  %+6s  %+8s     %+6s      %+6s     %+6s     %+4s      %+4s    %+6s    %+6s  '%(f0,f1,f11,f3,f2,f4,f5,f6,f7,f8,f9,f10))
+
 
 
 ################################################################################################################
