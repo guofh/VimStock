@@ -176,7 +176,7 @@ class FundsInfo():
         cur_url = 'http://data.10jqka.com.cn/funds/gnzjl/field/'+orderKey+'/order/'+asc+'/page/'+page+'/ajax/1/'
         r = requests.get(cur_url)
         df = pd.read_html(r.text)[0]
-        df['z'] = get_bk_codes(r.text)
+        df['z'] = self.get_bk_codes(r.text)
         self.__output_gn__(df)
 
         vim.current.buffer.append('')
@@ -199,7 +199,7 @@ class FundsInfo():
         cur_url = 'http://data.10jqka.com.cn/funds/hyzjl/field/'+orderKey+'/order/'+asc+'/page/'+page+'/ajax/1/'
         r = requests.get(cur_url)
         df = pd.read_html(r.text)[0]
-        df['z'] = get_bk_codes(r.text)
+        df['z'] = self.get_bk_codes(r.text)
         
         self.__output_hy__(df)
 
