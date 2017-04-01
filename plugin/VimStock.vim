@@ -33,6 +33,7 @@ command! -nargs=0 Vhyd exec('py CMD_Package().get_hyd()')
 command! -nargs=* Vbk exec('py FundsInfo().get_bk(<f-args>)')
 command! -nargs=0 Vgo exec('py FundsInfo().get_bk_quick()')
 
+command! -nargs=0 Venter exec('py MiniStock().enter()')
 
 python << EOF
 #coding=utf-8
@@ -415,6 +416,16 @@ class MiniStock():
         if int(strArr[3])>1:
             page = str(int(strArr[3])-1)
         vim.command(strArr[0]+' '+strArr[1]+' '+strArr[2]+' '+page)
+        
+    def enter(self):
+        cmds = ['Vgo']
+        cmdStr = vim.current.buffer[-1]
+        strArr = cmdStr.split()
+        cmd = strArr[0]
+
+        if cmd is cmds[0]:
+            fi = FundsInfo()
+            fi.get_bk_quick()
         
 
 ################################################################################################################
