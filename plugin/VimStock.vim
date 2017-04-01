@@ -157,7 +157,7 @@ class FundsInfo():
         self.__output_gg__(df)
 
         vim.current.buffer.append('')
-        cmdStr = 'Mggzjl '+sortkey+' '+asc_flag+' '+page
+        cmdStr = 'Vggzjl '+sortkey+' '+asc_flag+' '+page
         vim.current.buffer.append(cmdStr)
 
 
@@ -176,11 +176,11 @@ class FundsInfo():
         cur_url = 'http://data.10jqka.com.cn/funds/gnzjl/field/'+orderKey+'/order/'+asc+'/page/'+page+'/ajax/1/'
         r = requests.get(cur_url)
         df = pd.read_html(r.text)[0]
-
+        df['z'] = get_bk_codes(r.text)
         self.__output_gn__(df)
 
         vim.current.buffer.append('')
-        cmdStr = 'Mgnzjl '+sortkey+' '+asc_flag+' '+page
+        cmdStr = 'Vgnzjl '+sortkey+' '+asc_flag+' '+page
         vim.current.buffer.append(cmdStr)
 
 
@@ -199,12 +199,27 @@ class FundsInfo():
         cur_url = 'http://data.10jqka.com.cn/funds/hyzjl/field/'+orderKey+'/order/'+asc+'/page/'+page+'/ajax/1/'
         r = requests.get(cur_url)
         df = pd.read_html(r.text)[0]
-
+        df['z'] = get_bk_codes(r.text)
+        
         self.__output_hy__(df)
 
         vim.current.buffer.append('')
-        cmdStr = 'Mhyzjl '+sortkey+' '+asc_flag+' '+page
+        cmdStr = 'Vhyzjl '+sortkey+' '+asc_flag+' '+page
         vim.current.buffer.append(cmdStr)
+
+    ########################
+    #   得到板块的链接 
+    ########################    
+    def get_bk_codes(self,text):
+        url_arr = []
+        tbody = re.findall('<tbody>(.*?)</tbody>',text,re.S|re.M)
+        tr = re.findall('<tr(.*?)</tr>',tbody[0],re.S|re.M)
+        for line in tr:
+            urls = re.findall("(?<=href=\").+?(?=\")|(?<=href=\').+?(?=\')",line,re.S|re.M)
+            url =  "<h>"+urls[0]+"<h>"
+            url_arr.append(url)
+        return url_arr
+
 
 
     ########################
@@ -240,7 +255,7 @@ class FundsInfo():
         df.columns = ['a', 'b', 'c', 'd', 'e','f', 'g', 'h', 'i', 'j','k']
         df = df.set_index('a')
     	del vim.current.buffer[:]
-        vim.current.buffer.append('       行业       行业指数    涨跌幅   流入资金(亿)   流出资金(亿)  净额(亿)  公司家数   领涨股   涨跌幅.1  当前价(元)  ')
+        vim.current.buffer.append('       行业       行业指数    涨跌幅   流入资金(亿)   流出资金(亿)  净额(亿)  公司家数   领涨股   涨跌幅.1  当前价(元)   链接')
         vim.current.buffer.append('')
         
         numList = df.index.values
@@ -256,8 +271,9 @@ class FundsInfo():
             f8    = df.get_value(i,'i')
             f9    = df.get_value(i,'j')
             f10    = df.get_value(i,'k')
+            f11   = df.get_value(i,'z')
 
-            vim.current.buffer.append('%+2s  %+6s     %+8s    %+6s     %+6s      %+6s     %+6s     %+4s      %+4s    %+6s    %+6s'%(f0,f1,f2,f3,f4,f5,f6,f7,f8,f9,f10))
+            vim.current.buffer.append('%+2s  %+6s     %+8s    %+6s     %+6s      %+6s     %+6s     %+4s      %+4s    %+6s    %+6s   %+100s'%(f0,f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11))
 
     ########################
     #    概念，资金流输出
@@ -266,7 +282,7 @@ class FundsInfo():
         df.columns = ['a', 'b', 'c', 'd', 'e','f', 'g', 'h', 'i', 'j','k']
         df = df.set_index('a')
     	del vim.current.buffer[:]
-        vim.current.buffer.append('       概念       概念指数    涨跌幅   流入资金(亿)   流出资金(亿)  净额(亿)  公司家数   领涨股   涨跌幅.1  当前价(元)  ')
+        vim.current.buffer.append('       行业       行业指数    涨跌幅   流入资金(亿)   流出资金(亿)  净额(亿)  公司家数   领涨股   涨跌幅.1  当前价(元)   链接')
         vim.current.buffer.append('')
         
         numList = df.index.values
@@ -282,8 +298,9 @@ class FundsInfo():
             f8    = df.get_value(i,'i')
             f9    = df.get_value(i,'j')
             f10    = df.get_value(i,'k')
+            f11   = df.get_value(i,'z')
 
-            vim.current.buffer.append('%+2s  %+6s     %+8s    %+6s     %+6s      %+6s     %+6s     %+4s      %+4s    %+6s    %+6s'%(f0,f1,f2,f3,f4,f5,f6,f7,f8,f9,f10))
+            vim.current.buffer.append('%+2s  %+6s     %+8s    %+6s     %+6s      %+6s     %+6s     %+4s      %+4s    %+6s    %+6s   %+100s'%(f0,f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11))
 
 
 ################################################################################################################
@@ -307,7 +324,7 @@ class MiniStock():
         vim.command('vnew')
         
         index = 0
-        cmdStr = ['Mallstock zs True 1','Mgnzjl zdf True 1','Mhyzjl zdf True 1','Mallstock zdf True 1']
+        cmdStr = ['Vallstock zs True 1','Vgnzjl zdf True 1','Vhyzjl zdf True 1','Vallstock zdf True 1']
         for w in vim.windows:
             vim.current.window = w
             vim.command(cmdStr[index])
