@@ -253,7 +253,7 @@ class FundsInfo():
     #   行业资金流输出
     ########################
     def __output_hy__(self,df):
-        df.columns = ['a', 'b', 'c', 'd', 'e','f', 'g', 'h', 'i', 'j','k']
+        df.columns = ['a', 'b', 'c', 'd', 'e','f', 'g', 'h', 'i', 'j','k','z']
         df = df.set_index('a')
     	del vim.current.buffer[:]
         vim.current.buffer.append('       行业       行业指数    涨跌幅   流入资金(亿)   流出资金(亿)  净额(亿)  公司家数   领涨股   涨跌幅.1  当前价(元)   链接')
@@ -280,7 +280,7 @@ class FundsInfo():
     #    概念，资金流输出
     ########################
     def __output_gn__(self,df):
-        df.columns = ['a', 'b', 'c', 'd', 'e','f', 'g', 'h', 'i', 'j','k']
+        df.columns = ['a', 'b', 'c', 'd', 'e','f', 'g', 'h', 'i', 'j','k','z']
         df = df.set_index('a')
     	del vim.current.buffer[:]
         vim.current.buffer.append('       行业       行业指数    涨跌幅   流入资金(亿)   流出资金(亿)  净额(亿)  公司家数   领涨股   涨跌幅.1  当前价(元)   链接')
