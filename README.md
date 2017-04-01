@@ -8,7 +8,7 @@
 1. 需要添加vim对python2的支持
 2. 需要安装的python包:requests,pandas
 
-## MiniStock的使用命令
+## VimStock的使用命令
 
 1. #### **:Vallstock [关键字] [正倒序] [页码]**  
     
