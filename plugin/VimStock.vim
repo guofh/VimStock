@@ -51,6 +51,7 @@ import pandas as pd
 #from tabulate import tabulate
 import time
 import vim
+import re
 #import html5lib
 #pd.set_option('display.width',200)
 #pd.set_option('display.height',1000)
