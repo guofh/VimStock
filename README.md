@@ -3,10 +3,11 @@
 
 ![Alt text](https://github.com/guofh/VimStock/blob/master/VimStock.png)
 
-## 注意事项
+## 安装事项
 
 1. 需要添加vim对python2的支持
 2. 需要安装的python包:requests,pandas
+3. 使用自选股功能需要将目录下的.VimStock.mystock文件复制到用户根目录下。
 
 ## VimStock的使用命令
 
@@ -40,7 +41,7 @@
 
 7. #### **:Vmystock**
     
-    说明：Vmystock命令为显示自选股信息，自选股配置文件在plugin目录下的my.stock中，可以选择手动修改文件也可以通过命令添加、删除自选股列表。
+    说明：Vmystock命令为显示自选股信息，自选股配置文件在用户根目录下的.VimStock.mystock中，可以选择手动修改文件也可以通过命令添加、删除自选股列表。
 
 8. #### **:Vadd [股票代码]**
     
