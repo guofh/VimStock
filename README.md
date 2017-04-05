@@ -11,7 +11,7 @@
 
 1. 需要添加vim对python2的支持
 2. 需要安装的python包:requests,pandas
-3. 使用自选股功能需要将目录下的.VimStock.mystock文件复制到用户根目录下。
+3. .VimStock内放置的是一些功能需要的配置文件，如自选股功能。需要将.VimStock目录复制到用户根目录中。
 
 ## VimStock的使用命令
 
