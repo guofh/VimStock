@@ -57,6 +57,7 @@ import pandas as pd
 import time
 import vim
 import re
+import os
 #import html5lib
 #pd.set_option('display.width',200)
 #pd.set_option('display.height',1000)
@@ -68,7 +69,7 @@ pd.set_option('display.expand_frame_repr', False)
 #pd.set_option('display.encoding','utf-8')
 #pd.set_option('display.max_colwidth')
 
-mystockfile = '/home/guofh/.vim/bundle/VimStock/plugin/my.stock'
+mystockfile = os.path.expandvars('$HOME')+'/.VimStock.mystock'
 
 ################################################################################################################
 #
