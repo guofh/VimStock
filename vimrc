@@ -40,4 +40,6 @@ map ,c <C-w>j:resize -5<CR>
 map ,go :Vgo<CR>
 map ,<CR> :Vgo<CR>
 
+map ,zx :Vmystock<CR>
+
 set fileencodings=ucs-bom,utf-8,utf-16,gbk,big5,gb18030,latin1
