@@ -80,7 +80,6 @@ mystockfile = '/home/guofh/.vim/bundle/VimStock/plugin/my.stock'
 class MyStock():
 
     dictName = {'name':'name','now':'10','zdf':'199112','hs':'1968584','kp':'7','zg':'8','zd':'9','zs':'6','zf':'526792','syl':'2034120','sz':'3541450'}
-    mystockfile = 'my.stock'
 
     def getStock(self,code):
         url =  'http://d.10jqka.com.cn/multimarketreal/17,33/'+code+'/1968584_13_19_3541450_526792_6_7_8_9_10_2034120_199112_264648'
