@@ -69,7 +69,7 @@ pd.set_option('display.expand_frame_repr', False)
 #pd.set_option('display.encoding','utf-8')
 #pd.set_option('display.max_colwidth')
 
-mystockfile = os.path.expandvars('$HOME')+'/.VimStock.mystock'
+mystockfile = os.path.expandvars('$HOME')+'/.VimStock/mystock'
 
 ################################################################################################################
 #
