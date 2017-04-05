@@ -68,6 +68,8 @@ pd.set_option('display.expand_frame_repr', False)
 #pd.set_option('display.encoding','utf-8')
 #pd.set_option('display.max_colwidth')
 
+mystockfile = '/home/guofh/.vim/bundle/VimStock/plugin/my.stock'
+
 ################################################################################################################
 #
 #        
@@ -87,7 +89,7 @@ class MyStock():
         self.__parse_stock_text__(r.text)
 
     def getMyStock(self):
-        file_object = open(self.mystockfile)
+        file_object = open(mystockfile)
         stock_str = ''
         for stock in file_object:
             stock = stock.strip('\n')
@@ -102,7 +104,7 @@ class MyStock():
 
     def addStock(self,code):
 
-        file_object = open(self.mystockfile)
+        file_object = open(mystockfile)
         text  = ''
         for stock in file_object:
             stock = stock.strip('\n')
@@ -112,14 +114,14 @@ class MyStock():
         file_object.close()
 
 
-        output = open(self.mystockfile, 'w')
+        output = open(mystockfile, 'w')
         output.write(text)
         output.flush()
         output.close()
 
     def delStock(self,code):
 
-        file_object = open(self.mystockfile)
+        file_object = open(mystockfile)
         text  = ''
         for stock in file_object:
             stock = stock.strip('\n')
@@ -129,7 +131,7 @@ class MyStock():
         file_object.close()
 
 
-        output = open(self.mystockfile, 'w')
+        output = open(mystockfile, 'w')
         output.write(text)
         output.flush()
         output.close()
