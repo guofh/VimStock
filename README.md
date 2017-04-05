@@ -2,6 +2,7 @@
 基于vim命令行的炒股插件
 
 ![Alt text](https://github.com/guofh/VimStock/blob/master/VimStock.png)
+![Alt text](https://github.com/guofh/VimStock/blob/master/VimStock2.png)
 
 ## 安装事项
 
