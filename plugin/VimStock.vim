@@ -35,6 +35,11 @@ command! -nargs=0 Vgo exec('py FundsInfo().get_bk_quick()')
 
 command! -nargs=0 Venter exec('py MiniStock().enter()')
 
+command! -nargs=* Vstock exec('py MyStock().getStock(<f-args>)')
+command! -nargs=0 Vmystock exec('py MyStock().getMyStock()')
+command! -nargs=* Vadd exec('py MyStock().addStock(<f-args>)')
+command! -nargs=* Vdel exec('py MyStock().delStock(<f-args>)')
+
 python << EOF
 #coding=utf-8
 
@@ -43,7 +48,7 @@ import sys
 reload(sys)
 sys.setdefaultencoding("utf-8")
 
-
+import json
 import requests
 #from bs4 import BeautifulSoup
 #from lxml import etree
@@ -63,6 +68,109 @@ pd.set_option('display.expand_frame_repr', False)
 #pd.set_option('display.encoding','utf-8')
 #pd.set_option('display.max_colwidth')
 
+################################################################################################################
+#
+#        
+#                               个股信息，自选股信息
+#
+#
+################################################################################################################
+class MyStock():
+
+    dictName = {'name':'name','now':'10','zdf':'199112','hs':'1968584','kp':'7','zg':'8','zd':'9','zs':'6','zf':'526792','syl':'2034120','sz':'3541450'}
+    mystockfile = 'my.stock'
+
+    def getStock(self,code):
+        url =  'http://d.10jqka.com.cn/multimarketreal/17,33/'+code+'/1968584_13_19_3541450_526792_6_7_8_9_10_2034120_199112_264648'
+        r = requests.get(url)
+
+        self.__parse_stock_text__(r.text)
+
+    def getMyStock(self):
+        file_object = open(self.mystockfile)
+        stock_str = ''
+        for stock in file_object:
+            stock = stock.strip('\n')
+            stock_str = stock_str + stock + '_'
+
+        stock_str = stock_str[0:len(stock_str)-1]
+        self.getStock(stock_str)
+        file_object.close()
+
+        vim.current.buffer.append('')
+        vim.current.buffer.append('Vmystock')
+
+    def addStock(self,code):
+
+        file_object = open(self.mystockfile)
+        text  = ''
+        for stock in file_object:
+            stock = stock.strip('\n')
+            text = text + stock + '\n'
+
+        text = text + code + '\n'
+        file_object.close()
+
+
+        output = open(self.mystockfile, 'w')
+        output.write(text)
+        output.flush()
+        output.close()
+
+    def delStock(self,code):
+
+        file_object = open(self.mystockfile)
+        text  = ''
+        for stock in file_object:
+            stock = stock.strip('\n')
+            if stock != code:
+                text = text + stock + '\n'
+
+        file_object.close()
+
+
+        output = open(self.mystockfile, 'w')
+        output.write(text)
+        output.flush()
+        output.close()
+
+
+
+
+    def __parse_stock_text__(self,text):
+    
+        texttemp = text[16:len(text)-1]
+        js = json.loads(texttemp)
+
+        del vim.current.buffer[:]
+        vim.current.buffer.append('代码        名称     现价  涨跌幅(%) 换手(%)   开盘价  最高价  最低价  昨收价   振幅(%)    市盈率      市值 ')
+        vim.current.buffer.append('')
+
+        for key in js.keys():
+            dataTmp = js[key]
+            for code in dataTmp.keys():
+                name = dataTmp[code][self.dictName['name']]
+                xj = dataTmp[code][self.dictName['now']]
+                zdf = dataTmp[code][self.dictName['zdf']]
+                hs = dataTmp[code][self.dictName['hs']]
+                kp = dataTmp[code][self.dictName['kp']]
+                zg = dataTmp[code][self.dictName['zg']]
+                zd = dataTmp[code][self.dictName['zd']]
+                zs = dataTmp[code][self.dictName['zs']]
+                zf = dataTmp[code][self.dictName['zf']]
+                syl = dataTmp[code][self.dictName['syl']]
+                sz = dataTmp[code][self.dictName['sz']]
+
+                vim.current.buffer.append('%+6s  %+6s  %+6s  %+6s  %+8s  %+6s  %+6s  %+6s  %+6s  %+8s  %+10s  %+12s'%(code,name,xj,zdf,hs,kp,zg,zd,zs,zf,syl,sz))
+                
+
+################################################################################################################
+#
+#        
+#                               所有股票信息
+#
+#
+################################################################################################################
 class TotalStockInfo():
 
     url_base = 'http://q.10jqka.com.cn/index/index/board/all/field'
